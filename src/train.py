@@ -12,6 +12,38 @@ from preprocessing import preprocess_text
 from utils import calculate_accuracy, tokenize_text
 from prediction_utils import predict_sentiment
 
+# Function for training the model
+def train_model(model, tokenizer, optimizer, criterion, device, training_data, training_labels, epochs):
+    for epoch in range(epochs):
+        outputs = []
+        model.train()
+
+        for text, label in zip(training_data, training_labels):
+            output = model(**text)
+            loss = criterion(output.logits, torch.tensor([label]).to(device))
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            outputs.append(torch.argmax(output.logits).item())
+
+        # Calculate and print accuracy for the current epoch
+        accuracy = calculate_accuracy(outputs, training_labels)
+        print(f'Epoch: {epoch} - Accuracy: {accuracy}')
+
+    return model
+
+# Function for making predictions
+def make_predictions(model, tokenizer, device, data):
+    predicted_sentiments = []
+    for text in data["text"]:
+        encoded_text = tokenize_text(text, tokenizer, device)
+        predicted_sentiment = predict_sentiment(model, encoded_text)
+        predicted_sentiments.append(predicted_sentiment)
+
+    return predicted_sentiments
+
 # Load the dataset from a CSV file
 df = pd.read_csv('data/train.csv')
 
@@ -22,7 +54,7 @@ data = df[['text', 'target']]
 data['text'] = data['text'].apply(preprocess_text)
 
 # Map the 'target' column to binary values (0 or 1)
-data['target'] = data['target'].apply(lambda x: 1 if x==0 else 0)
+data['target'] = data['target'].apply(lambda x: 1 if x == 0 else 0)
 
 # Load model configuration from config.json
 with open('config.json', 'r') as f:
@@ -49,38 +81,18 @@ training_data = [tokenize_text(text, tokenizer, device) for text in data['text']
 training_labels = data['target']
 
 # Initialize the optimizer and loss function
-optimizer = torch.optim.Adam(params = model.parameters(), lr = learning_rate)
+optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
 criterion = torch.nn.CrossEntropyLoss()
 
-# Training loop
-for epoch in range(epochs):
-  outputs = []
-  model.train()
-
-  for text, label in zip(training_data, training_labels):
-
-    output = model(**text)
-    loss = criterion(output.logits, torch.tensor([label]).to(device))
-
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-    outputs.append(torch.argmax(output.logits).item())
-
-  # Calculate and print accuracy for the current epoch
-  accuracy = calculate_accuracy(outputs, training_labels)
-  print(f'epoch: {epoch} has an Accuracy of {accuracy}')
+# Training the model
+trained_model = train_model(model, tokenizer, optimizer, criterion, device, training_data, training_labels, epochs)
 
 # Make predictions on the entire dataset
-predicted_sentiments = []
-for text in data["text"]:
-    encoded_text = tokenize_text(text, tokenizer, device)
-    predicted_sentiment = predict_sentiment(model, encoded_text)
-    predicted_sentiments.append(predicted_sentiment)
+predicted_sentiments = make_predictions(trained_model, tokenizer, device, data)
 
 # Assuming `data['target']` contains true labels and `predicted_sentiments` contains predictions
 result = confusion_matrix(data['target'], predicted_sentiments)
 print(result)
 
-model.save_pretrained('model')
+# Save the trained model
+trained_model.save_pretrained('model')
