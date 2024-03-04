@@ -20,5 +20,35 @@ The project is organized into the following directories and files:
 
 1. Clone the repository:
    ``` bash
-   git clone https://github.com/Yohanes213/disaster-tweets-classification/.git
+   git clone https://github.com/Yohanes213/Disaster-Tweets-Classification.git
+   cd Disaster-Tweets-Classification
+    ```
+
+2. Install the required dependencies:
+   ```bash
+    pip install -r requirements.txt
+    ```
+   
+3. Set up the necessary data and model configuration:
+    - Place the training dataset (`train.csv`) in the `data/` directory.
+    - Configure model parameters in `config.json`.
+
+4. Run the `train_model.ipynb` notebook for model training.
+
+## Custom Functions
+
+Custom Python functions are organized into separate modules within the `src/` directory:
+
+- `preprocessing.py:` Contains the `preprocess_text` function for text preprocessing.
+- `utils.py:` Includes the `calculate_accuracy` and `tokenize_text` functions.
+- `prediction_utils.py:` Holds the `predict_sentiment` function for making predictions.
+
+## Results
+
+The model's performance is evaluated using metrics such as accuracy and a confusion matrix. Results can be found in the `train_model.ipynb` notebook.
+
+## Contributing
+
+Contributions are welcome! If you find issues or have suggestions, please open an issue or create a pull request.
+
    
