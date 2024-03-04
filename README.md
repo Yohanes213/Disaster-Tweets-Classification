@@ -15,3 +15,10 @@ The project is organized into the following directories and files:
 - **models/:** Placeholder for saving trained models.
 - **config.json:** Configuration file specifying model parameters.
 - **requirements.txt:** List of Python dependencies.
+
+## Getting Started
+
+1. Clone the repository:
+   ``` bash
+   git clone https://github.com/Yohanes213/disaster-tweets-classification/.git
+   
