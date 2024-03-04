@@ -12,10 +12,6 @@ from preprocessing import preprocess_text
 from utils import calculate_accuracy, tokenize_text
 from prediction_utils import predict_sentiment
 
-# Ignore warnings for cleaner output
-import warnings
-warnings.filterwarnings("ignore")
-
 # Load the dataset from a CSV file
 df = pd.read_csv('data/train.csv')
 
