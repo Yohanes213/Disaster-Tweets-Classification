@@ -46,7 +46,7 @@ def make_predictions(model, tokenizer, device, data):
 
 def main():
     # Load the dataset from a CSV file
-    df = pd.read_csv('data/train.csv')
+    df = pd.read_csv('../data/train.csv')
 
     # Select relevant columns for further processing
     data = df[['text', 'target']]
@@ -58,7 +58,7 @@ def main():
     data['target'] = data['target'].apply(lambda x: 1 if x == 0 else 0)
 
     # Load model configuration from config.json
-    with open('config.json', 'r') as f:
+    with open('../config.json', 'r') as f:
         config = json.load(f)
 
     # Extract relevant model configuration parameters
