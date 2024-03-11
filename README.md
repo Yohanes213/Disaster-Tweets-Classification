@@ -15,7 +15,7 @@ The project is organized into the following directories and files:
   - **prediction_utils.py**: Module for prediction-related functions.
   - **train.py**: Script for training the machine learning model.
 - **notebooks/:**
-  - `train_model.ipynb:` Jupyter notebook for model training.
+  - `sentiment_analysis_training.ipynb:` Jupyter notebook for model training.
 - **models/:** Placeholder for saving trained models.
 - **config.json:** Configuration file specifying model parameters.
 - **requirements.txt:** List of Python dependencies.
