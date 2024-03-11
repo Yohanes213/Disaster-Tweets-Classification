@@ -9,7 +9,11 @@ This project focuses on classifying disaster-related tweets using a pre-trained 
 The project is organized into the following directories and files:
 
 - **data/:** Contains the dataset used for training (`train.csv`).
-- **src/:** Includes custom Python modules for text preprocessing, utility functions, and prediction.
+- **src**: Source code directory.
+  - **preprocessing.py**: Module for text preprocessing functions.
+  - **utils.py**: Module for utility functions.
+  - **prediction_utils.py**: Module for prediction-related functions.
+  - **train.py**: Script for training the machine learning model.
 - **notebooks/:**
   - `train_model.ipynb:` Jupyter notebook for model training.
 - **models/:** Placeholder for saving trained models.
@@ -33,7 +37,10 @@ The project is organized into the following directories and files:
     - Place the training dataset (`train.csv`) in the `data/` directory.
     - Configure model parameters in `config.json`.
 
-4. Run the `train_model.ipynb` notebook for model training.
+4. Run the training script to train the machine learning model:
+    ``` bash
+    python src/train.py
+    ```
 
 ## Custom Functions
 
