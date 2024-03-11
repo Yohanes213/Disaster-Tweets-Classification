@@ -44,55 +44,59 @@ def make_predictions(model, tokenizer, device, data):
 
     return predicted_sentiments
 
-# Load the dataset from a CSV file
-df = pd.read_csv('data/train.csv')
+def main():
+    # Load the dataset from a CSV file
+    df = pd.read_csv('data/train.csv')
 
-# Select relevant columns for further processing
-data = df[['text', 'target']]
+    # Select relevant columns for further processing
+    data = df[['text', 'target']]
 
-# Apply text preprocessing to the 'text' column
-data['text'] = data['text'].apply(preprocess_text)
+    # Apply text preprocessing to the 'text' column
+    data['text'] = data['text'].apply(preprocess_text)
 
-# Map the 'target' column to binary values (0 or 1)
-data['target'] = data['target'].apply(lambda x: 1 if x == 0 else 0)
+    # Map the 'target' column to binary values (0 or 1)
+    data['target'] = data['target'].apply(lambda x: 1 if x == 0 else 0)
 
-# Load model configuration from config.json
-with open('config.json', 'r') as f:
-    config = json.load(f)
+    # Load model configuration from config.json
+    with open('config.json', 'r') as f:
+        config = json.load(f)
 
-# Extract relevant model configuration parameters
-model_name = config['model_config']['model_name']
-num_labels = config['model_config']['num_labels']
-epochs = config['training_config']['epochs']
-learning_rate = config['training_config']['learning_rate']
+    # Extract relevant model configuration parameters
+    model_name = config['model_config']['model_name']
+    num_labels = config['model_config']['num_labels']
+    epochs = config['training_config']['epochs']
+    learning_rate = config['training_config']['learning_rate']
 
-# Determine the device to use (CPU or GPU)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # Determine the device to use (CPU or GPU)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Load pre-trained model and tokenizer from Hugging Face Transformers
-model = AutoModelForSequenceClassification.from_pretrained(model_name).to(device)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+    # Load pre-trained model and tokenizer from Hugging Face Transformers
+    model = AutoModelForSequenceClassification.from_pretrained(model_name).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-# Configure the model for the specified number of labels
-model.config.num_labels = num_labels
+    # Configure the model for the specified number of labels
+    model.config.num_labels = num_labels
 
-# Tokenize the text data and convert to PyTorch tensors
-training_data = [tokenize_text(text, tokenizer, device) for text in data['text']]
-training_labels = data['target']
+    # Tokenize the text data and convert to PyTorch tensors
+    training_data = [tokenize_text(text, tokenizer, device) for text in data['text']]
+    training_labels = data['target']
 
-# Initialize the optimizer and loss function
-optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
-criterion = torch.nn.CrossEntropyLoss()
+    # Initialize the optimizer and loss function
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate)
+    criterion = torch.nn.CrossEntropyLoss()
 
-# Training the model
-trained_model = train_model(model, tokenizer, optimizer, criterion, device, training_data, training_labels, epochs)
+    # Training the model
+    trained_model = train_model(model, tokenizer, optimizer, criterion, device, training_data, training_labels, epochs)
 
-# Make predictions on the entire dataset
-predicted_sentiments = make_predictions(trained_model, tokenizer, device, data)
+    # Make predictions on the entire dataset
+    predicted_sentiments = make_predictions(trained_model, tokenizer, device, data)
 
-# Assuming `data['target']` contains true labels and `predicted_sentiments` contains predictions
-result = confusion_matrix(data['target'], predicted_sentiments)
-print(result)
+    # Assuming `data['target']` contains true labels and `predicted_sentiments` contains predictions
+    result = confusion_matrix(data['target'], predicted_sentiments)
+    print(result)
 
-# Save the trained model
-trained_model.save_pretrained('model')
+    # Save the trained model
+    trained_model.save_pretrained('model')
+
+if __name__ == "__main__":
+    main()
